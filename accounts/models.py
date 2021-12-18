@@ -1,15 +1,19 @@
 from django.db import models
+from django.db.models.base import Model
 from django.db.models.fields import BooleanField
 from django.forms.widgets import Widget
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, User
 
 # Create your models here.
-class User(User):
+class CustomUser(AbstractUser):
     USER_TYPE_CHOICES = (
         (1, 'restaurant'),
         (2, 'customer'),
     )
     user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES)
+
+    def __str__(self):
+        return str(self.username)
 
 class Customer(models.Model):
     GENDER = ( 
@@ -17,7 +21,7 @@ class Customer(models.Model):
         ('Female', 'Female'),
         ('Male', 'Male'),
     )
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
 
     name = models.CharField(max_length=100, null=True)  
     surname = models.CharField(max_length=100, null=True)  
@@ -25,9 +29,10 @@ class Customer(models.Model):
     phone = models.CharField(max_length=100, null=True)  
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     birth = models.DateField(null=True)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
 
     def __str__(self):
-        return self.name + " " + self.surname
+        return str(self.name + " " + self.surname)
 
 class Restaurant(models.Model):
     CATEGORY = ( 
@@ -37,8 +42,8 @@ class Restaurant(models.Model):
         ('Fast Food', 'Fast Food'),
         ('Other', 'Other'),
     )
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    rating = models.DecimalField(default=10.0, decimal_places=1, max_digits=3)
     restaurant_name = models.CharField(max_length=100, null=True)  
     category = models.CharField(max_length=100, null=True, choices=CATEGORY)  
     phone = models.CharField(max_length=100, null=True)  
@@ -46,21 +51,68 @@ class Restaurant(models.Model):
     address = models.CharField(max_length=200, null=True)  
 
     def __str__(self):
-        return self.restaurant_name
+        return str(self.restaurant_name)
 
 class Reservation(models.Model):
     res_date = models.DateTimeField(null=True)
     table = models.CharField(max_length=100, null=True)
+    notes = models.CharField(max_length=200, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     res = models.ForeignKey(Restaurant, on_delete=models.DO_NOTHING)
     date_created = models.DateField(auto_now_add=True, null=True)
     done = BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.customer + " res to " + self.res)
 
 class Order(models.Model):
     order_date = models.DateTimeField(null=True)
     content = models.CharField(max_length=100, null=True)
     cost = models.IntegerField(null=True)
+    notes = models.CharField(max_length=200, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     res = models.ForeignKey(Restaurant, on_delete=models.DO_NOTHING)
     date_created = models.DateField(auto_now_add=True, null=True)
     done = BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.customer + " res to " + self.res)
+
+class Menu(models.Model):
+    restaurant_name = models.CharField(max_length=100, null=True)
+    res = models.ForeignKey(Restaurant, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.restaurant_name)
+
+class MenuElement(models.Model):
+    CATEGORY = ( 
+        ('Cold Drink', 'Cold Drink'),
+        ('Hot Drink', 'Hot Drink'),
+        ('Alcohol', 'Alcohol'),
+        ('Starter', 'Starter'),
+        ('Meat&Fish', 'Meat&Fish'),
+        ('Soup', 'Soup'),
+        ('Burger', 'Burger'),
+        ('Pizza', 'Pizza'),
+        ('Pasta', 'Pasta'),
+        ('Desert', 'Desert'),
+    )
+    name = models.CharField(max_length=100, null=True)
+    cost = models.IntegerField(null=True)
+    ingredients = models.CharField(max_length=200, null=True)
+    res = models.ForeignKey(Menu, on_delete=models.DO_NOTHING)
+    category = models.CharField(max_length=100, null=True, choices=CATEGORY)  
+
+    def __str__(self):
+        return str(self.name)
+
+class Commment(models.Model):
+    header = models.CharField(max_length=100, null=True)
+    comment = models.CharField(max_length=200, null=True)
+    rate = models.DecimalField(decimal_places=1, default=10, max_digits=3)
+    res = models.ForeignKey(Restaurant, on_delete=models.DO_NOTHING)
+    customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.restaurant_name)

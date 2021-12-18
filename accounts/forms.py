@@ -1,9 +1,11 @@
 from django.forms import ModelForm, fields
 from accounts.models import  *
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User 
+from django.contrib.auth import get_user_model
 from django import forms
 
+User = get_user_model()
 
 #class CreateUserForm(UserCreationForm):
 #    class Meta:
@@ -19,7 +21,7 @@ class CreateCustomerForm(UserCreationForm):
     def save(self, commit=True):
         user = super(CreateCustomerForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
-        user.user_type = 1
+        user.user_type = 2
         if commit:
             user.save()
         return user

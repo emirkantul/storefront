@@ -14,71 +14,73 @@ from django.db.models.query_utils import Q
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
-
+from .decorators import allowed_users, unauthenticated_user
 
 # Create your views here.
 
 @login_required(login_url='userLogin')
+@allowed_users(2)
 def home(request):
     context = {}
     return render(request, 'accounts/home.html', context)
 
 @login_required(login_url='userLogin')
+@allowed_users(2)
 def restaurants(request):
     context = {}    
     return render(request, 'accounts/restaurants.html', context)
 
 @login_required(login_url='userLogin')
+@allowed_users(2)
 def search(request):
     context = {} 
     return render(request, 'accounts/search.html', context)
 
 @login_required(login_url='userLogin')
+@allowed_users(2)
 def profile(request):
     context = {} 
     return render(request, 'accounts/profile.html', context)
 
+@unauthenticated_user
 def userRegister(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    else:    
-        form = CreateCustomerForm()
+    form = CreateCustomerForm()
 
-        if request.method == 'POST':
-            form = CreateCustomerForm(request.POST)
-            if form.is_valid():
-                form.save()
-                user = form.cleaned_data.get('username')
-                messages.success(request, 'Account is created for ' + user + ' succesfully!')
-                return redirect('userLogin')
+    if request.method == 'POST':
+        form = CreateCustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = form.cleaned_data.get('username')
+            messages.success(request, 'Account is created for ' + user + ' succesfully!')
+            return redirect('userLogin')
 
-        context = {'form': form} 
-        return render(request, 'accounts/userRegister.html', context)
+    context = {'form': form} 
+    return render(request, 'accounts/userRegister.html', context)
 
+@unauthenticated_user
 def userLogin(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    else: 
-        if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-            user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=username, password=password)
 
-            if user is not None:
-                login(request, user)
-                return redirect('home')
-            else:
-                messages.info(request, 'User or password is incorrect!')
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.info(request, 'User or password is incorrect!')
 
-        context = {} 
-        return render(request, 'accounts/userLogin.html', context)
+    context = {} 
+    return render(request, 'accounts/userLogin.html', context)
 
 @login_required(login_url='userLogin')
+@allowed_users(2)
 def logoutUser(request):
     logout(request)
     return redirect('userLogin')
 
+unauthenticated_user
 def password_reset_request(request):
 	if request.method == "POST":
 		password_reset_form = PasswordResetForm(request.POST)
