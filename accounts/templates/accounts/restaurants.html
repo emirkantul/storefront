@@ -1,12 +1,49 @@
-{% extends 'accounts/main.html' %}
+{%  extends 'accounts/main.html' %}
 
 {% block content %}
+
 <br>
-<p>Restaurants</p>
-<br>
-<div class="center" style = "text-align: center;">
-    <h2>In Progress..</h2>
+
+ <style>
+     td {
+        text-align: center;
+     }
+</style>
+	<div align="center">
+		<h5>Restaurants</h5>
+		<hr>
+		<div class="card card-body">
+			
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Category</th>
+					<th>City</th>
+					<th>District</th>
+					<th>Rating</th>
+					<th>Order</th>
+					<th>Reservation</th>
+				</tr>
+
+				{% for restaurant in restaurants %}
+					<tr>
+						<td>{{restaurant.restaurant_name}}</td>
+						<td>{{restaurant.category}}</td>
+						<td>{{restaurant.city}}</td>
+                        <td>{{restaurant.district}}</td>
+						<td>{{restaurant.rating}}</td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'order' restaurant.user_id %}">Order</a></td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'reservation' restaurant.user_id %}">Reservation</a></td>
+
+
+					</tr>
+				{% endfor %}
+
+		
+			</table>
+		</div>
+	</div>
+
 </div>
 
 {% endblock %}
-

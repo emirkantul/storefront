@@ -1,11 +1,84 @@
 {% extends 'accounts/main.html' %}
 
 {% block content %}
+<style>
+    td {
+       text-align: center;
+    }
+</style>
+{% for message in messages %}
+<p id = "messages">{{message}}</p>
+{% endfor %}
+<div  align = "center">
+    <br>
+    <h5>Last Orders</h5>
+    <hr>
+    <div class="card card-body">
+        
+        <table class="table table-sm">
+            <tr>
+                <th>Restaurant</th>
+                <th>Date Orderd</th>
+                <th>Order Date</th>
+                <th>Content</th>
+                <th>Status</th>
+                <th>Details</th>
+                <th>Order Again</th>
+            </tr>
+
+            {% for order in orders %}
+                <tr>
+                    <td>{{order.res.restaurant_name}}</td>
+                    <td>{{order.date_created}}</td>
+                    <td>{{order.order_date}}</td>
+                    <td>{{order.content}}</td>
+                    <td>{{order.status}}</td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'order_details' order.id %}">Details</a></td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'order' order.res.user_id %}">Order Again</a></td>
+
+
+                </tr>
+            {% endfor %}
+
+    
+        </table>
+    </div>
+</div>
 <br>
-<p>Home</p>
-<br>
-<div class="center" style = "text-align: center;">
-    <h2>In Progress..</h2>
+<div  align = "center">
+    <br>
+    <h5>Last Reservations</h5>
+    <hr>
+    <div class="card card-body">
+        
+        <table class="table table-sm">
+            <tr>
+                <th>Restaurant</th>
+                <th>Reservation Date</th>
+                <th>Date Created</th>
+                <th>Status</th>
+                <th>Table</th>
+                <th>Details</th>
+                <th>Res Again</th>
+            </tr>
+
+            {% for res in reservations %}
+                <tr>
+                    <td>{{res.res.restaurant_name}}</td>
+                    <td>{{res.res_date}}</td>
+                    <td>{{res.date_created}}</td>
+                    <td>{{res.status}}</td>
+                    <td>{{res.table}}</td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'reservation_details' res.id %}">Details</a></td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'reservation' res.res.user_id %}">Res Again</a></td>
+
+
+                </tr>
+            {% endfor %}
+
+    
+        </table>
+    </div>
 </div>
 
 {% endblock %}

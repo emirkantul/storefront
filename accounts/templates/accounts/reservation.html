@@ -1,0 +1,26 @@
+{%  extends 'accounts/main.html' %}
+
+{% block content %}
+<div class="card card-body" align="center">
+			
+    <form method="POST" class="register-form" id="register-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name"><i class="zmdi zmdi-account material-icons-name">Reservation Date: (yyyy-mm-dd hh:mm)</i></label>
+            <div name="name">{{form.res_date}}</div>
+        </div>
+        <div class="form-group">
+            <label for="re-pass">Notes: </label>
+            <div name="name">{{form.notes}}</div>
+        </div>
+        <br>
+
+        {{form.errors}}
+        <br>
+        <div class="form-group form-button">
+            <input type="submit" name="signup" id="signup" class="form-submit" value="Make Reservation"/>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

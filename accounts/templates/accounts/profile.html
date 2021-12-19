@@ -1,12 +1,78 @@
-{% extends 'accounts/main.html' %}
-
+{%  extends 'accounts/main.html' %}
+{% load static %}
 {% block content %}
+
+<style>
+	.profile-pic{
+		max-width: 300px;
+		max-height:200px;
+		margin: 0 auto;
+	}
+</style>
+
 <br>
-<p>Profile</p>
-<br>
-<div class="center" style = "text-align: center;">
-    <h2>In Progress..</h2>
+<div class="row">
+	<div class="col-md-3">
+		<div class="card card-body">
+			<a class="btn btn-warning" href="{% url 'home' %}"> &#8592; Back to Home</a>
+			<hr>
+			<h3 style="text-align: center">Profile Settings</h3>
+			<hr>
+			<img class="profile-pic" src="{{request.user.customer.image.url}}" >
+		
+		</div>
+	</div>
+	<div class="col-md-9">
+		<div class="card card-body">
+			
+            <form method="POST" class="register-form" id="register-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name"><i class="zmdi zmdi-account material-icons-name">Name: </i></label>
+                    <div name="name">{{form.name}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="email"><i class="zmdi zmdi-email"></i>Surname: </label>
+                    <div name="name">{{form.surname}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="pass"><i class="zmdi zmdi-lock"></i>Gender: </label>
+                    <div name="name">{{form.gender}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i>Phone: </label>
+                    <div name="name">{{form.phone}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i>Mail: </label>
+                    <div name="name">{{form.mail}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="pass"><i class="zmdi zmdi-lock"></i>Birth: </label>
+                    <div name="name">{{form.birth}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="re-pass"><i class="zmdi zmdi-lock-outline">Profile Picture: </i></label>
+                    <div name="name">{{form.image}}</div>
+                </div>
+                <br>
+
+                {{form.errors}}
+                <br>
+                <div class="form-group form-button">
+                    <input type="submit" name="signup" id="signup" class="form-submit" value="Submit"/>
+                </div>
+            </form>
+		</div>
+	</div>
 </div>
 
-{% endblock %}
 
+
+{% endblock %}

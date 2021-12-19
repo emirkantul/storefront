@@ -22,7 +22,7 @@ class Customer(models.Model):
         ('Male', 'Male'),
     )
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-
+    mail = models.EmailField(null=True)
     name = models.CharField(max_length=100, null=True)  
     surname = models.CharField(max_length=100, null=True)  
     gender = models.CharField(max_length=100, null=True, choices=GENDER)  
@@ -42,41 +42,53 @@ class Restaurant(models.Model):
         ('Fast Food', 'Fast Food'),
         ('Other', 'Other'),
     )
+    city = models.CharField(max_length=100, null=True)  
+    district = models.CharField(max_length=100, null=True)  
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     rating = models.DecimalField(default=10.0, decimal_places=1, max_digits=3)
     restaurant_name = models.CharField(max_length=100, null=True)  
     category = models.CharField(max_length=100, null=True, choices=CATEGORY)  
     phone = models.CharField(max_length=100, null=True)  
     date_created = models.DateField(auto_now_add=True, null=True)
-    address = models.CharField(max_length=200, null=True)  
-
+    address = models.TextField(max_length=400, null=True)  
     def __str__(self):
         return str(self.restaurant_name)
 
 class Reservation(models.Model):
+    STATUS = ( 
+        ('Pending', 'Pending'),
+        ('Done', 'Done'),
+        ('Restaurant Approved', 'Restaurant Approved'),
+        ('Restaurant Declined', 'Restaurant Declined'),
+    )
     res_date = models.DateTimeField(null=True)
     table = models.CharField(max_length=100, null=True)
-    notes = models.CharField(max_length=200, null=True)
+    notes = models.TextField(max_length=200, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     res = models.ForeignKey(Restaurant, on_delete=models.DO_NOTHING)
     date_created = models.DateField(auto_now_add=True, null=True)
-    done = BooleanField(default=False)
+    status = models.CharField(max_length=100, null=True, choices=STATUS)
 
     def __str__(self):
-        return str(self.customer + " res to " + self.res)
+        return str(self.customer.name + " res to " + self.res.restaurant_name)
 
 class Order(models.Model):
+    STATUS = ( 
+        ('Pending', 'Pending'),
+        ('Done', 'Done'),
+        ('Restaurant Approved', 'Restaurant Approved'),
+        ('Restaurant Declined', 'Restaurant Declined'),
+    )
     order_date = models.DateTimeField(null=True)
-    content = models.CharField(max_length=100, null=True)
-    cost = models.IntegerField(null=True)
-    notes = models.CharField(max_length=200, null=True)
+    content = models.TextField(max_length=100, null=True)
+    notes = models.TextField(max_length=200, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     res = models.ForeignKey(Restaurant, on_delete=models.DO_NOTHING)
     date_created = models.DateField(auto_now_add=True, null=True)
-    done = BooleanField(default=False)
+    status = models.CharField(max_length=100, null=True, choices=STATUS)
 
     def __str__(self):
-        return str(self.customer + " res to " + self.res)
+        return str(self.customer.name + " order to " + self.res.restaurant_name)
 
 class Menu(models.Model):
     restaurant_name = models.CharField(max_length=100, null=True)
@@ -101,8 +113,10 @@ class MenuElement(models.Model):
     name = models.CharField(max_length=100, null=True)
     cost = models.IntegerField(null=True)
     ingredients = models.CharField(max_length=200, null=True)
-    res = models.ForeignKey(Menu, on_delete=models.DO_NOTHING)
+    menu = models.ForeignKey(Menu, on_delete=models.DO_NOTHING)
     category = models.CharField(max_length=100, null=True, choices=CATEGORY)  
+    image = models.ImageField(default='default.png', upload_to='menu')
+
 
     def __str__(self):
         return str(self.name)

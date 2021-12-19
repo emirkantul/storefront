@@ -3,7 +3,7 @@ from django.http import HttpResponse, request
 from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django.contrib import messages
 from .models import *
-from .forms import CreateCustomerForm
+from .forms import CreateCustomerForm, CustomerProfileForm, OrderForm, ReservationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail, BadHeaderError
@@ -21,14 +21,43 @@ from .decorators import allowed_users, unauthenticated_user
 @login_required(login_url='userLogin')
 @allowed_users(2)
 def home(request):
-    context = {}
+    customer = request.user.customer
+    orders = Order.objects.filter(customer=customer)
+    reservations = Reservation.objects.filter(customer=customer)
+    context = {'orders' : orders, 'reservations' : reservations}
     return render(request, 'accounts/home.html', context)
 
 @login_required(login_url='userLogin')
 @allowed_users(2)
+def comment(request, pk):
+    restaurant = Restaurant.objects.get(user_id=pk)
+    context = {'res' : restaurant}
+    return render(request, 'accounts/comment.html', context)
+
+@login_required(login_url='userLogin')
+@allowed_users(2)
 def restaurants(request):
-    context = {}    
+    restaurants = Restaurant.objects.all()
+    context = {"restaurants" : restaurants}    
     return render(request, 'accounts/restaurants.html', context)
+
+@login_required(login_url='userLogin')
+@allowed_users(2)
+def cancel_res(request, pk):
+    reservation = Reservation.objects.get(id=pk)
+    reservation.delete()
+    messages.success(request, 'Reservation is deleted successully!')
+    return redirect('/')
+
+@login_required(login_url='userLogin')
+@allowed_users(2)
+def cancel_order(request, pk):
+    order = Order.objects.get(id=pk)
+    order.delete()
+    messages.success(request, 'Order is deleted successully!')
+    return redirect('/')
+
+    
 
 @login_required(login_url='userLogin')
 @allowed_users(2)
@@ -38,8 +67,74 @@ def search(request):
 
 @login_required(login_url='userLogin')
 @allowed_users(2)
+def order(request, pk):
+    restaurant = Restaurant.objects.get(user_id=pk)
+    menu = Menu.objects.get(res = restaurant)
+    items = MenuElement.objects.filter(menu = menu)
+    form = OrderForm()
+    customer = request.user.customer
+    res = restaurant
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save(cust = customer, res=res)
+            messages.success(request, 'Order succesfully created!')
+
+            return redirect('home')
+		
+    context = {'form':form, 'menu':items}
+    return render(request, 'accounts/order.html', context)
+
+@login_required(login_url='userLogin')
+@allowed_users(2)
+def order_details(request, pk):
+    order = Order.objects.get(id=pk)
+    customer =  order.customer
+    res = order.res
+    status = False
+    if order.status != "Restaurant Declined" and order.status != "Done":
+        status = True
+    context = {'order' : order, 'res' : res, 'status' : status}
+    return render(request, 'accounts/order_details.html', context)
+
+@login_required(login_url='userLogin')
+@allowed_users(2)
+def reservation(request, pk):
+    restaurant = Restaurant.objects.get(user_id=pk)
+    form = ReservationForm()
+    if request.method == 'POST':
+        form = ReservationForm(request.POST)
+        res = restaurant
+        customer = request.user.customer
+        if form.is_valid():
+            form.save(cust = customer, res = res)
+
+            messages.success(request, 'Reservation succesfully created!')
+
+            return redirect('home')
+		
+
+    context = {'form':form}
+    return render(request, 'accounts/reservation.html', context)
+
+@login_required(login_url='userLogin')
+@allowed_users(2)
+def reservation_details(request, pk):
+    reservation = Reservation.objects.get(id=pk)
+    customer =  reservation.customer
+    res = reservation.res
+    status = False
+    if reservation.status != "Restaurant Declined" and reservation.status != "Done":
+        status = True
+    context = {'reservation' : reservation, 'res' : res, 'status' : status}
+    return render(request, 'accounts/reservation_details.html', context)
+
+@login_required(login_url='userLogin')
+@allowed_users(2)
 def profile(request):
-    context = {} 
+    customer = request.user.customer
+    form  = CustomerProfileForm(instance=customer)
+    context = {'form' : form} 
     return render(request, 'accounts/profile.html', context)
 
 @unauthenticated_user
