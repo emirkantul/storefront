@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'reservah',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-                'host': 'mongodb+srv://emirkantul:hdjs3462@reservah.0hed9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+                'host': 'mongodb+srv://ipekteselli:ip213ek213@reservah.0hed9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
             }
     }
 }
