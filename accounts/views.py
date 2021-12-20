@@ -3,7 +3,7 @@ from django.http import HttpResponse, request
 from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django.contrib import messages
 from .models import *
-from .forms import CreateCustomerForm, CustomerProfileForm, OrderForm, ReservationForm
+from .forms import CommentForm, CreateCustomerForm, CustomerProfileForm, OrderForm, ReservationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail, BadHeaderError
@@ -31,8 +31,23 @@ def home(request):
 @allowed_users(2)
 def comment(request, pk):
     restaurant = Restaurant.objects.get(user_id=pk)
-    context = {'res' : restaurant}
+    comments = Comment.objects.filter(res=restaurant)
+    customer = request.user.customer
+    form = CommentForm()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form.save(cust = customer, res=restaurant)
+            messages.success(request, 'Comment succesfully created!')
+            strId = str(restaurant.user_id)
+            return redirect('/comment/' + strId)
+		
+    context = {'form':form, 'res' : restaurant, 'comments' : comments}
     return render(request, 'accounts/comment.html', context)
+
+
+    
+
 
 @login_required(login_url='userLogin')
 @allowed_users(2)

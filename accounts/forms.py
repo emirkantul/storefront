@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.contrib.admin import widgets
 from django import forms
-
+from bson.decimal128 import Decimal128, create_decimal128_context
+import decimal
+from decimal import Decimal
 User = get_user_model()
 
 class CustomerProfileForm(ModelForm):
@@ -58,3 +60,27 @@ class ReservationForm(ModelForm):
         if commit:
             reservation.save()
         return reservation
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        exclude = ['customer', 'res', 'id']
+
+    def save(self, cust, res, commit=True):
+        comment = super(CommentForm, self).save(commit=False)
+        comment.customer = cust
+        comment.res = res
+        
+        decimal128_ctx = create_decimal128_context()
+        count = Comment.objects.filter(res=res).count() + 1
+        with decimal.localcontext(decimal128_ctx):
+            comment_rate = Decimal128(comment.rate)
+            count_128 = Decimal128(Decimal(count))
+            rate = Decimal128(comment_rate.to_decimal() + count_128.to_decimal())
+            rate = rate.to_decimal()
+
+        Restaurant.objects.filter(user_id=res.user_id).update(rating = rate)
+        if commit:
+            comment.save()
+        return comment

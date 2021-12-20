@@ -21,6 +21,7 @@
 					<th>City</th>
 					<th>District</th>
 					<th>Rating</th>
+					<th>Details</th>
 					<th>Order</th>
 					<th>Reservation</th>
 				</tr>
@@ -32,6 +33,7 @@
 						<td>{{restaurant.city}}</td>
                         <td>{{restaurant.district}}</td>
 						<td>{{restaurant.rating}}</td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'comment' restaurant.user_id %}">Details</a></td>
 						<td><a class="btn btn-sm btn-info" href="{% url 'order' restaurant.user_id %}">Order</a></td>
 						<td><a class="btn btn-sm btn-info" href="{% url 'reservation' restaurant.user_id %}">Reservation</a></td>
 

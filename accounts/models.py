@@ -3,6 +3,7 @@ from django.db.models.base import Model
 from django.db.models.fields import BooleanField
 from django.forms.widgets import Widget
 from django.contrib.auth.models import AbstractUser, User
+import uuid
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -121,12 +122,13 @@ class MenuElement(models.Model):
     def __str__(self):
         return str(self.name)
 
-class Commment(models.Model):
+class Comment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     header = models.CharField(max_length=100, null=True)
-    comment = models.CharField(max_length=200, null=True)
+    comment = models.TextField(max_length=200, null=True)
     rate = models.DecimalField(decimal_places=1, default=10, max_digits=3)
     res = models.ForeignKey(Restaurant, on_delete=models.DO_NOTHING)
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return str(self.restaurant_name)
+        return str(self.customer.name) + " comment to " + str(self.res.restaurant_name)
