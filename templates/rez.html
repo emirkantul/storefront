@@ -1,0 +1,73 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title> Restaurant Reservation Form </title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="custom.css" rel="stylesheet" type="text/css">
+
+    <script>
+        function finalCost(){
+            var roomType = document.getElementById("room_type").value;
+            var roomNum = document.getElementById("room_number").value;
+            var personNum = document.getElementById("person_number").value;
+            var childNum = document.getElementById("child_number").value;
+            var resFacilities = document.getElementById("res_facilities").value;
+
+            var total = (parseInt(roomType)*10) + ((roomNum)*2) + ((personNum)*3) + ((childNum)*2) + ((resFacilities)*5)
+
+            document.getElementById("result").innerHTML = total;
+        }
+    </script>
+
+
+</head>
+<body>
+
+     <div class="hotel_reserve_box">
+         <h3> Restaurant Reservation Form </h3><br>
+         <form>
+
+             <div class="form-group">
+                 <label>Number of Customers</label>
+                 <select class="form-control" id="room_number" onchange="finalCost()">
+                     <option value="0"> 0 </option>
+                     <option value="1"> 1 </option>
+                     <option value="2"> 2 </option>
+                     <option value="3"> 3 </option>
+                     <option value="4"> 4 </option>
+                     <option value="5"> 5 </option>
+                     <option value="6"> 6 </option>
+                     <option value="7"> 7 </option>
+                 </select>
+             </div>
+             <div class="form-group">
+                 <label>Reservation Time</label>
+                 <select class="form-control" id="person_number" onchange="finalCost()">
+                     <option value="10:00"> 10:00 </option>
+                     <option value="11:00"> 11:00 </option>
+                     <option value="12:00"> 12:00 </option>
+                     <option value="13:00"> 13:00 </option>
+                     <option value="14:00"> 14:00 </option>
+                     <option value="15:00"> 15:00 </option>
+                     <option value="16:00"> 16:00 </option>
+                     <option value="17:00"> 17:00 </option>
+                 </select>
+             </div>
+			<br><br>
+            
+			  <p class="forgot" align="center"><a href="{% url 'ok' %}">Rezerve</p>
+         
+             
+			  <button class="forgot" align="center"><a href="{% url 'index' %}">Back</button>
+         </form>
+     </div>
+
+</body>
+</html>
