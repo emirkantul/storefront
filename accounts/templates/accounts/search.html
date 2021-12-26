@@ -1,12 +1,213 @@
-{% extends 'accounts/main.html' %}
+{%  extends 'accounts/main.html' %}
 
 {% block content %}
+
 <br>
-<p>Search</p>
-<br>
-<div class="center" style = "text-align: center;">
-    <h2>In Progress..</h2>
+<style>
+    /* Style the Image Used to Trigger the Modal */
+#myImg {
+ border-radius: 5px;
+ cursor: pointer;
+ transition: 0.3s;
+}
+
+#myImg:hover {opacity: 0.7;}
+
+/* The Modal (background) */
+.modal {
+ display: none; /* Hidden by default */
+ position: fixed; /* Stay in place */
+ z-index: 1; /* Sit on top */
+ padding-top: 100px; /* Location of the box */
+ left: 0;
+ top: 0;
+ width: 100%; /* Full width */
+ height: 100%; /* Full height */
+ overflow: auto; /* Enable scroll if needed */
+ background-color: rgb(0,0,0); /* Fallback color */
+ background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (Image) */
+.modal-content {
+ margin: auto;
+ display: block;
+ width: 80%;
+ max-width: 400px;
+}
+
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+#caption {
+ margin: auto;
+ display: block;
+ width: 80%;
+ max-width: 700px;
+ text-align: center;
+ color: #ccc;
+ padding: 10px 0;
+ height: 150px;
+}
+
+/* Add Animation - Zoom in the Modal */
+.modal-content, #caption { 
+ animation-name: zoom;
+ animation-duration: 0.6s;
+}
+
+@keyframes zoom {
+ from {transform:scale(0)} 
+ to {transform:scale(1)}
+}
+
+/* The Close Button */
+.close {
+ position: absolute;
+ top: 15px;
+ right: 35px;
+ color: #f1f1f1;
+ font-size: 40px;
+ font-weight: bold;
+ transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+ color: #bbb;
+ text-decoration: none;
+ cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+ .modal-content {
+   width: 100%;
+ }
+}
+    td {
+       text-align: center;
+    }
+</style>
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+   <!-- The Close Button -->
+   <span class="close">&times;</span>
+ 
+   <!-- Modal Content (The Image) -->
+   <img class="modal-content" id="img01">
+ 
+   <!-- Modal Caption (Image Text) -->
+   <div id="caption"></div>
+ </div>
+ <style>
+     td {
+        text-align: center;
+     }
+</style>
+	<div align="center">
+		<h5>Search Restaurants</h5>
+		<hr>
+        <div class="card card-body">
+            <form method="GET">
+                {{myFilter.form}}
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+        <hr>
+		<div class="card card-body">
+			
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Category</th>
+					<th>City</th>
+					<th>District</th>
+					<th>Rating</th>
+					<th>Details</th>
+					<th>Order</th>
+					<th>Reservation</th>
+				</tr>
+
+				{% for restaurant in restaurants %}
+					<tr>
+						<td>{{restaurant.restaurant_name}}</td>
+						<td>{{restaurant.category}}</td>
+						<td>{{restaurant.city}}</td>
+                        <td>{{restaurant.district}}</td>
+						<td>{{restaurant.rating}}</td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'comment' restaurant.user_id %}">Details</a></td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'order' restaurant.user_id %}">Order</a></td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'reservation' restaurant.user_id %}">Reservation</a></td>
+
+
+					</tr>
+				{% endfor %}
+
+		
+			</table>
+		</div>
+	</div>
+<hr>
+<div align="center">
+    <h5>Search Foods</h5>
+    <hr>
+    <div class="card card-body">
+        <form method="GET">
+            {{foodFilter.form}}
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+    </div>
+    <hr>
+    <div class="card card-body">
+        
+        <table class="table table-sm">
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Ingredients</th>
+                <th>Image</th>
+                <th>Cost</th>
+
+            </tr>
+
+            {% for element in foods %}
+                <tr>
+                    <td>{{element.name}}</td>
+                    <td>{{element.food_category}}</td>
+                    <td>{{element.ingredients}}</td>
+                    <td><img id="myImg" src={{element.image.url}} style="width:100%; max-width:50px";></td>
+                    <td>{{element.cost}}</td>
+
+
+                </tr>
+            {% endfor %}
+
+    
+        </table>
+    </div>
+</div>
 </div>
 
-{% endblock %}
+<script>
+    // Get the modal
+var modal = document.getElementById("myModal");
 
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+var img = document.getElementById("myImg");
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+img.onclick = function(){
+  modal.style.display = "block";
+  modalImg.src = this.src;
+  captionText.innerHTML = this.alt;
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() { 
+  modal.style.display = "none";
+}
+</script>
+{% endblock %}

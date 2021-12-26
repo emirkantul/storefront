@@ -15,7 +15,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from .decorators import allowed_users, unauthenticated_user
-
+from .filters import RestaurantFilter, FoodFilter
 # Create your views here.
 
 @login_required(login_url='userLogin')
@@ -77,7 +77,13 @@ def cancel_order(request, pk):
 @login_required(login_url='userLogin')
 @allowed_users(2)
 def search(request):
-    context = {} 
+    restaurants = Restaurant.objects.all()
+    foods = MenuElement.objects.all()
+    myFilter = RestaurantFilter(request.GET, queryset=restaurants)
+    restaurants = myFilter.qs
+    foodFilter = FoodFilter(request.GET, queryset=foods)
+    foods = foodFilter.qs
+    context = {"restaurants" : restaurants, "myFilter" : myFilter, "foodFilter" : foodFilter, 'foods' : foods}    
     return render(request, 'accounts/search.html', context)
 
 @login_required(login_url='userLogin')

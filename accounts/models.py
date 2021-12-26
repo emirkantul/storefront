@@ -115,7 +115,7 @@ class MenuElement(models.Model):
     cost = models.IntegerField(null=True)
     ingredients = models.CharField(max_length=200, null=True)
     menu = models.ForeignKey(Menu, on_delete=models.DO_NOTHING)
-    category = models.CharField(max_length=100, null=True, choices=CATEGORY)  
+    food_category = models.CharField(max_length=100, null=True, choices=CATEGORY)  
     image = models.ImageField(default='default.png', upload_to='menu')
 
 
