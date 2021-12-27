@@ -1,0 +1,1 @@
+web: gunicorn sorefront.wsgi --log-file -
