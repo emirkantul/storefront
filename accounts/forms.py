@@ -1,5 +1,6 @@
 from django.forms import ModelForm, fields
 from django.forms.widgets import DateTimeInput
+from django.shortcuts import redirect
 from accounts.models import  *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User 
@@ -16,6 +17,32 @@ class CustomerProfileForm(ModelForm):
         model = Customer 
         fields = '__all__'
         exclude = ['date_created', 'user']
+
+class MenuElementForm(ModelForm):
+    class Meta:
+        model = MenuElement 
+        fields = '__all__'
+        exclude = ['menu']
+
+    def save(self, res, commit=True):
+        element = super(MenuElementForm, self).save(commit=False)
+        element.menu = Menu.objects.get(res = res)
+        if commit:
+            element.save()
+        return element
+
+class RestaurantProfileForm(ModelForm):
+    class Meta:
+        model = Restaurant 
+        fields = '__all__'
+        exclude = ['date_created', 'user']
+
+
+class ContactForm(ModelForm):
+    class Meta:
+        model = Contact
+        fields = '__all__'
+        
 class CreateCustomerForm(UserCreationForm):
     email = forms.EmailField(required=True)
     class Meta:
@@ -30,6 +57,19 @@ class CreateCustomerForm(UserCreationForm):
             user.save()
         return user
     
+class CreateRestaurantForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    class Meta:
+        model = User 
+        fields = ['username', 'email', 'password1', 'password2'] 
+
+    def save(self, commit=True):
+        user = super(CreateRestaurantForm, self).save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.user_type = 1
+        if commit:
+            user.save()
+        return user
 
 class OrderForm(ModelForm):
     class Meta:

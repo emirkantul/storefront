@@ -3,7 +3,7 @@ from django.http import HttpResponse, request
 from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django.contrib import messages
 from .models import *
-from .forms import CommentForm, CreateCustomerForm, CustomerProfileForm, OrderForm, ReservationForm
+from .forms import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail, BadHeaderError
@@ -26,6 +26,15 @@ def home(request):
     reservations = Reservation.objects.filter(customer=customer)
     context = {'orders' : orders, 'reservations' : reservations}
     return render(request, 'accounts/home.html', context)
+
+@login_required(login_url='restaurantLogin')
+@allowed_users(1)
+def restaurantHome(request):
+    restaurant = request.user.restaurant
+    orders = Order.objects.filter(res=restaurant)
+    reservations = Reservation.objects.filter(res=restaurant)
+    context = {'orders' : orders, 'reservations' : reservations}
+    return render(request, 'accounts/restaurantHome.html', context)
 
 @login_required(login_url='userLogin')
 @allowed_users(2)
@@ -57,7 +66,7 @@ def restaurants(request):
     return render(request, 'accounts/restaurants.html', context)
 
 @login_required(login_url='userLogin')
-@allowed_users(2)
+@allowed_users(1)
 def cancel_res(request, pk):
     reservation = Reservation.objects.get(id=pk)
     reservation.delete()
@@ -65,14 +74,44 @@ def cancel_res(request, pk):
     return redirect('/')
 
 @login_required(login_url='userLogin')
-@allowed_users(2)
+@allowed_users(1)
 def cancel_order(request, pk):
     order = Order.objects.get(id=pk)
     order.delete()
     messages.success(request, 'Order is deleted successully!')
     return redirect('/')
 
-    
+@login_required(login_url='restaurantLogin')
+@allowed_users(1)
+def cancelRes(request, pk):
+    reservation = Reservation.objects.get(id=pk)
+    Reservation.objects.filter(id=pk).update(status = "Restaurant Declined")
+    messages.success(request, 'Reservation is canceled successully!')
+    return redirect('restaurantHome')
+
+@login_required(login_url='restaurantLogin')
+@allowed_users(1)
+def cancelOrder(request, pk):
+    order = Order.objects.get(id=pk)
+    Order.objects.filter(id=pk).update(status = "Restaurant Declined")
+    messages.success(request, 'Order is canceled successully!')
+    return redirect('restaurantHome')    
+
+@login_required(login_url='restaurantLogin')
+@allowed_users(1)
+def acceptRes(request, pk):
+    reservation = Reservation.objects.filter(id=pk)
+    Reservation.objects.filter(id=pk).update(status = "Restaurant Approved")
+    messages.success(request, 'Reservation is accepted successully!')
+    return redirect('restaurantHome')
+
+@login_required(login_url='restaurantLogin')
+@allowed_users(1)
+def acceptOrder(request, pk):
+    order = Order.objects.get(id=pk)
+    Order.objects.filter(id=pk).update(status = "Restaurant Approved")
+    messages.success(request, 'Order is accepted successully!')
+    return redirect('restaurantHome')  
 
 @login_required(login_url='userLogin')
 @allowed_users(2)
@@ -155,8 +194,44 @@ def reservation_details(request, pk):
 def profile(request):
     customer = request.user.customer
     form  = CustomerProfileForm(instance=customer)
+    if request.method == "POST":
+        form = CustomerProfileForm(request.POST, request.FILES, instance=customer)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated succesfully!')
+            return redirect('profile')
+
     context = {'form' : form} 
     return render(request, 'accounts/profile.html', context)
+
+@login_required(login_url='restaurantLogin')
+@allowed_users(1)
+def menu(request):
+    res = request.user.restaurant
+    m = Menu.objects.get(res = res)
+    menu = MenuElement.objects.filter(menu = m)
+    form = MenuElementForm()
+    if request.method == "POST":
+        form = MenuElementForm(request.POST, request.FILES)
+        if form.is_valid:
+            form.save(res = res)
+    context = {'menu' : menu, 'form' : form} 
+    return render(request, 'accounts/menu.html', context)
+
+@login_required(login_url='restaurantLogin')
+@allowed_users(1)
+def restaurantProfile(request):
+    restaurant = request.user.restaurant
+    form  = RestaurantProfileForm(instance=restaurant)
+    if request.method == "POST":
+        form = RestaurantProfileForm(request.POST, request.FILES, instance=restaurant)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated succesfully!')
+            return redirect('restaurantProfile')
+
+    context = {'form' : form} 
+    return render(request, 'accounts/restaurantProfile.html', context)
 
 @unauthenticated_user
 def userRegister(request):
@@ -190,8 +265,51 @@ def userLogin(request):
     context = {} 
     return render(request, 'accounts/userLogin.html', context)
 
+@unauthenticated_user
+def restaurantRegister(request):
+    form = CreateRestaurantForm()
+
+    if request.method == 'POST':
+        form = CreateRestaurantForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = form.cleaned_data.get('username')
+            messages.success(request, 'Account is created for ' + user + ' succesfully!')
+            return redirect('restaurantLogin')
+
+    context = {'form': form} 
+    return render(request, 'accounts/restaurantRegister.html', context)
+
 @login_required(login_url='userLogin')
 @allowed_users(2)
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your request submitted succesfully!')
+            return redirect('home')
+    form = ContactForm()
+    context = {'form': form}
+    return render(request, 'accounts/contact.html', context)
+
+@unauthenticated_user
+def restaurantLogin(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('restaurantHome')
+        else:
+            messages.info(request, 'User or password is incorrect!')
+
+    context = {} 
+    return render(request, 'accounts/restaurantLogin.html', context)
+
 def logoutUser(request):
     logout(request)
     return redirect('userLogin')

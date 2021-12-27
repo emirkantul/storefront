@@ -14,9 +14,9 @@
 <div class="row">
 	<div class="col-md-3">
 		<div class="card card-body">
-			<a class="btn btn-warning" href="{% url 'home' %}"> &#8592; Back to Home</a>
+			<a class="btn btn-warning" href="{% url 'restaurantHome' %}"> &#8592; Back to Home</a>
 			<hr>
-			<h3 style="text-align: center">Profile Settings</h3>
+			<h3 style="text-align: center">Restaurant Profile</h3>
 			<hr>
 			<img class="profile-pic" src="{{request.user.customer.image.url}}" >
 		
@@ -32,17 +32,17 @@
                 {% endfor %}
                 <div class="form-group">
                     <label for="name"><i class="zmdi zmdi-account material-icons-name">Name: </i></label>
-                    <div name="name">{{form.name}}</div>
+                    <div name="name">{{form.restaurant_name}}</div>
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="email"><i class="zmdi zmdi-email"></i>Surname: </label>
-                    <div name="name">{{form.surname}}</div>
+                    <label for="email"><i class="zmdi zmdi-email"></i>City: </label>
+                    <div name="name">{{form.city}}</div>
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="pass"><i class="zmdi zmdi-lock"></i>Gender: </label>
-                    <div name="name">{{form.gender}}</div>
+                    <label for="pass"><i class="zmdi zmdi-lock"></i>District: </label>
+                    <div name="name">{{form.district}}</div>
                 </div>
                 <br>
                 <div class="form-group">
@@ -51,13 +51,18 @@
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i>Mail: </label>
-                    <div name="name">{{form.mail}}</div>
+                    <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i>Category: </label>
+                    <div name="name">{{form.category}}</div>
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="pass"><i class="zmdi zmdi-lock"></i>Birth: </label>
-                    <div name="name">{{form.birth}}</div>
+                    <label for="pass"><i class="zmdi zmdi-lock"></i>Address: </label>
+                    <div name="name">{{form.address}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="re-pass"><i class="zmdi zmdi-lock-outline">Rating: </i></label>
+                    <div name="name">{{form.rating}}</div>
                 </div>
                 <br>
                 <div class="form-group">

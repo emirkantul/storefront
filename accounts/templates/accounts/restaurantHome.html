@@ -1,0 +1,85 @@
+{% extends 'accounts/main.html' %}
+
+{% block content %}
+<style>
+    td {
+       text-align: center;
+    }
+</style>
+{% for message in messages %}
+<p id = "messages">{{message}}</p>
+{% endfor %}
+<div  align = "center">
+    <br>
+    <h5>Orders</h5>
+    <hr>
+    <div class="card card-body">
+        
+        <table class="table table-sm">
+            <tr>
+                <th>Customer</th>
+                <th>Date Orderd</th>
+                <th>Order Date</th>
+                <th>Content</th>
+                <th>Status</th>
+                <th>Cancel</th>
+                <th>Accept</th>
+            </tr>
+
+            {% for order in orders %}
+                <tr>
+                    <td>{{order.customer.name}}</td>
+                    <td>{{order.date_created}}</td>
+                    <td>{{order.order_date}}</td>
+                    <td>{{order.content}}</td>
+                    <td>{{order.status}}</td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'cancelOrder' order.id %}">Cancel</a></td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'acceptOrder' order.id %}">Accept</a></td>
+
+
+                </tr>
+            {% endfor %}
+
+    
+        </table>
+    </div>
+</div>
+<br>
+<div  align = "center">
+    <br>
+    <h5>Reservations</h5>
+    <hr>
+    <div class="card card-body">
+        
+        <table class="table table-sm">
+            <tr>
+                <th>Customer</th>
+                <th>Reservation Date</th>
+                <th>Date Created</th>
+                <th>Status</th>
+                <th>Table</th>
+                <th>Cancel</th>
+                <th>Accept</th>
+            </tr>
+
+            {% for res in reservations %}
+                <tr>
+                    <td>{{res.customer.name}}</td>
+                    <td>{{res.res_date}}</td>
+                    <td>{{res.date_created}}</td>
+                    <td>{{res.status}}</td>
+                    <td>{{res.table}}</td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'cancelRes' res.id %}">Cancel</a></td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'acceptRes' res.id %}">Accept</a></td>
+
+
+                </tr>
+            {% endfor %}
+
+    
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+

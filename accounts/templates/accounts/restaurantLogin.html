@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sign Up Form</title>
+    <title>Restaurant Login</title>
 
     <!-- Font Icon -->
     <link rel="stylesheet" href="{% static 'fonts/material-icon/css/material-design-iconic-font.min.css' %}">
@@ -19,19 +19,10 @@
     <div class="main">
 
         <!-- Sing in  Form -->
-        <section class="sign-in">
-            <div class="container">
-                <div class="signin-content">
-                    <div class="signin-image">
-                        <figure><img src="{%  static 'img/signin-image.jpg' %}" alt="sing up image"></figure>
-                        <a href="{% url 'userRegister' %}" class="signup-image-link">Create an account</a>
-                        <a href="{% url 'password_reset' %}" class="signup-image-link">Forgot your password?</a>
-                        <a href="{% url 'restaurantLogin' %}" class="signup-image-link">Are you a restaurant?</a>
-
-                    </div>
-
-                    <div class="signin-form">
-                        <h2 class="form-title">Sign in</h2>
+        <section class="sign-up">
+                <div class="signup-content">
+                    <div class="signup-form" align='center'>
+                        <h2 class="form-title">Restaurant Sign in</h2>
                         <form method="POST" class="register-form" id="login-form">
                             {% csrf_token %}
                             <div class="form-group">
@@ -49,21 +40,17 @@
                             <div class="form-group form-button">
                                 <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
                             </div>
+
+                            <a href="{% url 'restaurantRegister' %}" class="signup-image-link">Create an account</a>
+                            <a href="{% url 'password_reset' %}" class="signup-image-link">Forgot your password?</a>
+                            <a href="{% url 'restaurantLogin' %}" class="signup-image-link">Are you a restaurant?</a>
                             {% for message in messages %}
                                 <p id = "messages">{{message}}</p>
                             {% endfor %}
                         </form>
-                        <div class="social-login">
-                            <span class="social-label">Or login with</span>
-                            <ul class="socials">
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
-                            </ul>
-                        </div>
+
                     </div>
                 </div>
-            </div>
         </section>
 
         <script src="vendor/jquery/jquery.min.js"></script>

@@ -6,7 +6,7 @@ class RestaurantFilter(django_filters.FilterSet):
     class Meta:
         model = Restaurant
         fields = '__all__'
-        exclude = ['user', 'rating', 'date_created', 'phone']
+        exclude = ['user', 'rating', 'date_created', 'phone', 'image']
 
 class FoodFilter(django_filters.FilterSet):
     class Meta:

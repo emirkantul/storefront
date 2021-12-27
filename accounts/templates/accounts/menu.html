@@ -1,0 +1,84 @@
+{%  extends 'accounts/main.html' %}
+{% load static %}
+{% block content %}
+<style>
+    td {
+       text-align: center;
+    }
+</style>
+<div align="center">
+    <h5>Menu</h5>
+    <hr>
+    <div class="card card-body">
+        
+        <table class="table table-sm">
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Ingredients</th>
+                <th>Image</th>
+                <th>Cost</th>
+
+            </tr>
+
+            {% for element in menu %}
+                <tr>
+                    <td>{{element.name}}</td>
+                    <td>{{element.food_category}}</td>
+                    <td>{{element.ingredients}}</td>
+                    <td><img id="myImg" src={{element.image.url}} style="width:100%; max-width:50px";></td>
+                    <td>{{element.cost}}</td>
+
+
+                </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+    <div class="col-md-9">
+		<div class="card card-body">
+			
+            <form method="POST" class="register-form" id="register-form">
+                {% csrf_token %}
+                {% for message in messages %}
+                <p id = "messages">{{message}}</p>
+                {% endfor %}
+                <div class="form-group">
+                    <label for="name"><i class="zmdi zmdi-account material-icons-name">Name: </i></label>
+                    <div name="name">{{form.name}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="email"><i class="zmdi zmdi-email"></i>Cost: </label>
+                    <div name="name">{{form.cost}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="pass"><i class="zmdi zmdi-lock"></i>Ingredients: </label>
+                    <div name="name">{{form.ingredients}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i>Category: </label>
+                    <div name="name">{{form.food_category}}</div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="re-pass"><i class="zmdi zmdi-lock-outline">Image: </i></label>
+                    <div name="name">{{form.image}}</div>
+                </div>
+                <br>
+
+                {{form.errors}}
+                <br>
+                <div class="form-group form-button">
+                    <input type="submit" name="signup" id="signup" class="form-submit" value="Submit"/>
+                </div>
+            </form>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

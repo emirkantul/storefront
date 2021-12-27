@@ -38,6 +38,7 @@ class Customer(models.Model):
 class Restaurant(models.Model):
     CATEGORY = ( 
         ('Cafe', 'Cafe'),
+        ('Bar', 'Bar'),
         ('Fine Dining', 'Fine Dining'),
         ('Casual or Family-Style', 'Casual or Family-Style'),
         ('Fast Food', 'Fast Food'),
@@ -52,8 +53,18 @@ class Restaurant(models.Model):
     phone = models.CharField(max_length=100, null=True)  
     date_created = models.DateField(auto_now_add=True, null=True)
     address = models.TextField(max_length=400, null=True)  
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+
     def __str__(self):
         return str(self.restaurant_name)
+
+class Contact(models.Model):
+    email = models.EmailField()
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+
+    def __str__(self):
+        return self.email
 
 class Reservation(models.Model):
     STATUS = ( 
@@ -116,7 +127,7 @@ class MenuElement(models.Model):
     ingredients = models.CharField(max_length=200, null=True)
     menu = models.ForeignKey(Menu, on_delete=models.DO_NOTHING)
     food_category = models.CharField(max_length=100, null=True, choices=CATEGORY)  
-    image = models.ImageField(default='default.png', upload_to='menu')
+    image = models.ImageField(default='default.png', upload_to='')
 
 
     def __str__(self):
