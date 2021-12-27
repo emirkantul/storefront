@@ -1,1 +1,1 @@
-web: gunicorn sorefront.wsgi --log-file -
+web: gunicorn storefront.wsgi --log-file -
